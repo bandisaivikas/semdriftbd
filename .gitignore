@@ -46,3 +46,9 @@ data/windows/
 .idea/
 *.swp
 *.swo
+
+# Personal / paperwork files kept in the project folder (never commit)
+*.pdf
+*.docx
+*.pages
+softcom__Copy_/

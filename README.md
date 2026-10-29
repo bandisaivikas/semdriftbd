@@ -54,7 +54,7 @@ Kafka producer  ──►  Kafka topic (news-stream-spark)
 WKCS = α · W₂(P, Q) + β · KL(P ‖ Q)    (α=0.6, β=0.4)
 ```
 
-Embeddings are projected to a shared PCA subspace before computing both distances. This combines the geometric sensitivity of Wasserstein distance with the distributional precision of KL divergence, outperforming the stability.
+Embeddings are projected to a shared PCA subspace before computing both distances. This combines the geometric sensitivity of Wasserstein distance with the distributional precision of KL divergence, giving a more stable score than KL divergence alone.
 
 
 ### BERTopic Causal Attribution
@@ -97,7 +97,7 @@ Peak throughput with 3 Spark workers: **37.3 tasks/s**.
 ## Project Structure
 
 ```
-semdriftbd/
+big_data/
 ├── src/
 │   ├── drift.py                    # WKCS metric (Wasserstein + KL)
 │   ├── attribution.py              # BERTopic causal attribution
@@ -249,10 +249,15 @@ Evaluated on a 50K-article news corpus (2017) with 37 sliding windows of 30 days
 If you use SemDriftBD in your research, please cite:
 
 ```bibtex
-@misc{semdriftbd2025,
-  title   = {SemDriftBD: Distributed Semantic Drift Detection in Large-Scale Text Streams},
-  author  = {Koduri, Saivikas Bandi},
-  year    = {2025},
-  url     = {https://github.com/bandisaivikas/semdriftbd}
+@inproceedings{bandi2026semdriftbd,
+  title     = {Distributed Semantic Drift Detection in Large-Scale Text Streams},
+  author    = {Bandi, Sai Vikas and Surya, J. Jaya and Bypuneni, Chaitanya Krishna and {Mallikharjuna Rao K}},
+  booktitle = {Proceedings of the International Conference on Software, Telecommunications and Computer Networks (SoftCOM)},
+  address   = {Split, Croatia},
+  year      = {2026},
+  publisher = {IEEE},
+  note      = {To appear}
 }
 ```
+
+Code: https://github.com/bandisaivikas/big_data

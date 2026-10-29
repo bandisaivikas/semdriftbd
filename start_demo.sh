@@ -1,5 +1,5 @@
 #!/bin/bash
-cd ~/github/semdriftbd
+cd "$(dirname "$0")"
 source venv/bin/activate
 
 echo "=== SemDriftBD Demo Startup ==="
