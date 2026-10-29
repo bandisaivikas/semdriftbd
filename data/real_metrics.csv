@@ -1,0 +1,5 @@
+Method,Alerts,TP,FP,FN,Precision,Recall,F1
+Cosine Distance,4,3,1,4,0.75,0.429,0.545
+Wasserstein-only,4,3,1,4,0.75,0.429,0.545
+KL-only,6,4,2,3,0.667,0.571,0.615
+WKCS (ours),6,4,2,3,0.667,0.571,0.615
