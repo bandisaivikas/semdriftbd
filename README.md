@@ -103,7 +103,7 @@ The cluster is 3 Docker containers on one physical host, so these numbers do not
 ## Project Structure
 
 ```
-big_data/
+semdriftbd/
 ├── src/
 │   ├── drift.py                    # WKCS metric (Wasserstein + KL)
 │   ├── attribution.py              # BERTopic causal attribution
@@ -280,7 +280,7 @@ If you use SemDriftBD in your research, please cite:
 }
 ```
 
-Code: https://github.com/bandisaivikas/big_data
+Code: https://github.com/bandisaivikas/semdriftbd
 
 ---
 
