@@ -9,7 +9,7 @@ SemDriftBD detects when the meaning of text data changes over time in big-data p
 ## Architecture
 
 ```
-News corpus (60K articles)
+CC-News corpus (630,643 articles)
        │
        ▼
 Kafka producer  ──►  Kafka topic (news-stream-spark)
@@ -61,15 +61,15 @@ Embeddings are projected to a shared PCA subspace before computing both distance
 
 When a drift alert fires, BERTopic clusters articles in both windows into topics and computes per-topic WKCS scores. The ranked output shows which topics contributed most to the drift and by what percentage — enabling root-cause analysis in seconds.
 
-Example — peak drift window (Sep 28 → Oct 28, 2017, WKCS 0.426):
+Example — peak drift window (Pair 9, May 2017, WKCS 2.874):
 
-| Topic keywords | Drift contribution |
-|---|---|
-| woman, movie, fans, film | 41.1 % |
-| care, elderly, information | 33.6 % |
-| team, season, fight, league | 9.9 % |
-| police, shooting, sports | 9.1 % |
-| reports, share, group | 6.3 % |
+| Topic keywords | Contribution | Topic WKCS |
+|---|---|---|
+| woman, movie, fans, adorable, film | 41.1 % | 10.23 |
+| care, elderly, contact, information | 33.6 % | 8.37 |
+| open, team, season, fight, league | 9.9 % | 2.46 |
+| news, baseball, police, shooting, sports | 9.1 % | 2.26 |
+| q1, reports, share, group, mln | 6.3 % | 1.57 |
 
 ### Adaptive Threshold Alerting
 
@@ -83,14 +83,20 @@ Default: N=5, z=2.0. Alerts fire automatically when the current WKCS exceeds the
 
 ### Scalability (Spark parallel execution)
 
-| Data size | Tasks | Time (s) | Throughput |
-|---|---|---|---|
-| 5 windows | 15 | 5.47 | 2.7 tasks/s |
-| 10 windows | 30 | 2.67 | 11.2 tasks/s |
-| 20 windows | 60 | 2.81 | 21.4 tasks/s |
-| 36 windows | 108 | 3.28 | **33.0 tasks/s** |
+Data-size scaling (3 partitions):
 
-Peak throughput with 3 Spark workers: **37.3 tasks/s**.
+| Window pairs | Tasks | Time (s) | Throughput |
+|---|---|---|---|
+| 5 | 15 | 4.30 | 3.5 tasks/s |
+| 10 | 30 | 2.33 | 12.9 tasks/s |
+| 15 | 45 | 2.46 | 18.3 tasks/s |
+| 20 | 60 | 2.52 | 23.8 tasks/s |
+| 25 | 75 | 2.61 | 28.8 tasks/s |
+| 36 | 108 | 2.89 | **37.3 tasks/s** |
+
+Partition scaling (36 pairs): speedup peaks at **1.46×** with 3 partitions, matching the 3 worker cores; 4 and 6 partitions are slower (0.83×, 0.86×) because scheduling overhead outweighs parallelism.
+
+The cluster is 3 Docker containers on one physical host, so these numbers do not include real inter-machine network latency.
 
 ---
 
@@ -220,12 +226,26 @@ Results saved to `data/scalability_results.csv`.
 
 ## Results
 
-Evaluated on a 50K-article news corpus (2017) with 37 sliding windows of 30 days (15-day stride):
+**Data.** CC-News, 630,643 English articles from January 2017 to July 2018. Kafka and Spark ingest the full corpus; WKCS scoring runs on a stratified sample of 49,998 articles (proportional across months). That gives 37 sliding windows of 30 days (15-day stride), i.e. 36 window pairs, with 95–4,960 articles per window.
 
-- **Peak drift:** Pair 14 (Sep 28 → Oct 28, 2017), WKCS = 0.426 — driven by the Las Vegas shooting and concurrent entertainment news burst
-- **Alerts fired:** 6 of 36 pairs at z = 2.0σ threshold
-- **Throughput:** up to 37.3 tasks/s on 3 Spark workers
-- **Attribution precision:** BERTopic correctly identifies dominant topic shifts within seconds of alert
+**Drift scores** (36 pairs, `data/drift_scores_with_alerts.csv`):
+
+- Mean WKCS 0.622; peak 2.874 (Pair 9, May 2017); minimum 0.139 (Pair 36)
+- 7 alerts at the rolling µ + 2σ threshold (w = 5)
+
+**Detection** against 6 reference drift events, labelled independently by two authors:
+
+| Method | Precision | Recall | F1 |
+|---|---|---|---|
+| Cosine distance | 0.250 | 0.167 | 0.200 |
+| MMD (alibi-detect) | 0.250 | 0.167 | 0.200 |
+| Wasserstein only | 0.500 | 0.333 | 0.400 |
+| KL only | 0.667 | 0.667 | 0.667 |
+| **WKCS (ours)** | **0.667** | **0.667** | **0.667** |
+
+WKCS matches KL-only on detection and is far more stable: its coefficient of variation across the 36 pairs is **0.507**, against 0.799 for KL-dominant weighting, a 37% reduction (`data/weight_sensitivity.csv`). The α = 0.6, β = 0.4 weights were picked to minimise this variance, not to maximise F1.
+
+**Throughput:** 37.3 tasks/s and a 1.46× parallel speedup on 3 Spark workers (see Scalability above).
 
 ---
 
@@ -250,8 +270,8 @@ If you use SemDriftBD in your research, please cite:
 
 ```bibtex
 @inproceedings{bandi2026semdriftbd,
-  title     = {Distributed Semantic Drift Detection in Large-Scale Text Streams},
-  author    = {Bandi, Sai Vikas and Surya, J. Jaya and Bypuneni, Chaitanya Krishna and {Mallikharjuna Rao K}},
+  title     = {{SemDriftBD}: Distributed Semantic Drift Detection in Large-Scale Text Streams},
+  author    = {Bandi, Saivikas and Bypuneni, Chaitanya Krishna and J, Jayasurya and {Mallikharjuna Rao K}},
   booktitle = {Proceedings of the International Conference on Software, Telecommunications and Computer Networks (SoftCOM)},
   address   = {Split, Croatia},
   year      = {2026},
