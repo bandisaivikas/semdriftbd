@@ -1,0 +1,21 @@
+name: Feature request
+description: Suggest an improvement, a new metric or a new baseline
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Proposed change
+      description: How it could work. Mention if it would change WKCS scores.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered

@@ -1,0 +1,34 @@
+name: Bug report
+description: Something is broken or a result does not reproduce
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Describe the problem and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The exact commands you ran, in order.
+      placeholder: |
+        1. docker-compose up -d
+        2. python3 src/compute_all_drift.py
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error output or logs
+      render: shell
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      placeholder: "OS, Python version, Spark version, Docker version"
+    validations:
+      required: true

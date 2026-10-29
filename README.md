@@ -281,3 +281,13 @@ If you use SemDriftBD in your research, please cite:
 ```
 
 Code: https://github.com/bandisaivikas/big_data
+
+---
+
+## Contributing
+
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md). Report security problems privately as described in [SECURITY.md](SECURITY.md).
+
+## License
+
+Released under the [MIT License](LICENSE).
